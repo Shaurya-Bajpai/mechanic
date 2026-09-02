@@ -5,6 +5,6 @@ import retrofit2.http.GET
 
 interface MechanicApi {
 
-    @GET("mechanics")
+    @GET("mechanic")
     suspend fun getMechanics(): List<Mechanic>
 }

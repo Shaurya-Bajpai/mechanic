@@ -105,7 +105,7 @@ fun MechanicCard(
             )
 
             Text(
-                text = mechanic.services.joinToString(" • "),
+                text = mechanic.services.replace(", ", " • "),
                 style = MaterialTheme.typography.bodyMedium
             )
         }
