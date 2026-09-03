@@ -11,19 +11,18 @@
 ## Tech Stack
 - Kotlin
 - Jetpack Compose
-- MVVM
-- Retrofit
-- Gson
-- MockAPI
-- Hilt (Dependency Injection)
+- MVVM Architecture
+- Retrofit (REST API)
+- Gson (JSON serialization)
+- MockAPI (Backend service)
 
-## Dependency Injection
-This project uses **Hilt** for dependency injection:
-- `NetworkModule`: Provides Retrofit instance and MechanicApi
-- `RepositoryModule`: Provides MechanicRepository singleton
-- `@HiltAndroidApp`: Application class for Hilt initialization
-- `@HiltViewModel`: ViewModel injection in HomeViewModel, MechanicDetailsViewModel, RequestServiceViewModel
-- `hiltViewModel()`: Compose integration for ViewModel creation
+## Dependency Management
+This project uses **manual dependency injection** with ViewModelFactory pattern:
+- `HomeViewModelFactory`: Creates HomeViewModel with injected MechanicRepository
+- `MechanicDetailsViewModelFactory`: Creates MechanicDetailsViewModel with injected repository
+- `RetrofitInstance`: Singleton pattern for Retrofit API instance
+- `MechanicRepository`: Centralized data access layer
+- ViewModels are created in Compose Screens using factory pattern
 
 ## API
 GET /mechanic
@@ -42,18 +41,20 @@ UI → ViewModel → Repository → Retrofit → MockAPI
 - **HomeViewModel**: Manages home screen state and mechanic list loading
 - **MechanicDetailsViewModel**: Loads and manages individual mechanic details
 - **RequestServiceViewModel**: Handles service request form state and validation
-- Uses Hilt for dependency injection with `@HiltViewModel`
+- Each ViewModel uses `StateFlow` for reactive state management
+- Created via ViewModelFactory for dependency injection
 
 #### Data Layer
 - **MechanicRepository**: Single source of truth for data access
 - **MechanicApi**: Retrofit service interface for API calls
+- **RetrofitInstance**: Singleton providing configured Retrofit instance
 - **Models**: Mechanic, ServiceRequest, UI state models
 - Network operations run on coroutine scope for non-blocking operations
 
-#### Dependency Injection (Hilt)
-- **NetworkModule**: Provides Retrofit singleton with base URL
-- **RepositoryModule**: Provides repository with injected API dependency
-- **MechanicApplication**: Hilt entry point with @HiltAndroidApp annotation
+#### Dependency Injection Pattern
+- **ViewModelFactory Pattern**: Custom factory classes (HomeViewModelFactory, MechanicDetailsViewModelFactory)
+- **Singleton Pattern**: RetrofitInstance provides single Retrofit instance
+- **Constructor Injection**: ViewModels receive dependencies through constructor
 
 ## API/Data Details
 
@@ -124,19 +125,90 @@ Returns list of all available mechanics
 ## Project Structure
 ```
 app/src/main/java/com/example/mechanic/
-├── di/
-│   ├── NetworkModule.kt       (Retrofit & API setup)
-│   └── RepositoryModule.kt    (Repository provision)
 ├── screens/
 │   ├── home/
+│   │   ├── HomeScreen.kt
+│   │   ├── HomeViewModel.kt
+│   │   ├── HomeViewModelFactory.kt
+│   │   └── HomeUiState.kt
 │   ├── details/
+│   │   ├── MechanicDetailsScreen.kt
+│   │   ├── MechanicDetailsViewModel.kt
+│   │   ├── MechanicDetailsViewModelFactory.kt
+│   │   └── MechanicDetailsUiState.kt
 │   ├── request/
+│   │   ├── RequestServiceScreen.kt
+│   │   ├── RequestServiceViewModel.kt
+│   │   └── RequestServiceUiState.kt
+│   ├── confirmation/
+│   │   └── ConfirmationScreen.kt
 │   └── components/
+│       ├── LoadingView.kt
+│       ├── ErrorView.kt
+│       └── MechanicCard.kt
 ├── data/
 │   ├── model/
+│   │   ├── Mechanic.kt
+│   │   ├── ServiceRequest.kt
+│   │   ├── HomeUiState.kt
+│   │   ├── MechanicDetailsUiState.kt
+│   │   └── RequestServiceUiState.kt
 │   ├── remote/
+│   │   ├── MechanicApi.kt        (Retrofit interface)
+│   │   └── RetrofitInstance.kt   (Singleton Retrofit)
 │   └── repository/
+│       └── MechanicRepository.kt  (Data access layer)
 ├── navigation/
-├── ui/
-└── MechanicApplication.kt      (Hilt @HiltAndroidApp)
+│   └── AppNavigation.kt          (Navigation graph & routing)
+├── ui/theme/
+│   ├── Color.kt
+│   ├── Type.kt
+│   └── Theme.kt
+└── MainActivity.kt
 ```
+
+## Key Implementation Details
+
+### ViewModelFactory Pattern
+- **HomeViewModelFactory**: Injects MechanicRepository into HomeViewModel
+- **MechanicDetailsViewModelFactory**: Injects MechanicRepository into MechanicDetailsViewModel
+- Factory is passed to `viewModel()` composable in Screens
+
+### State Management
+- Each screen has corresponding ViewModel with `StateFlow`
+- UI observes state changes via `collectAsState()`
+- Three main UI states: Loading, Success (with data), Error (with message)
+
+### Navigation Flow
+- Home Screen → Mechanics List
+- Details Screen → Individual Mechanic Information
+- Request Service Screen → Service Form with validation
+- Confirmation Screen → Success message
+
+## Build & Run
+
+### Prerequisites
+- Android Studio Giraffe or later
+- Android SDK 24+ (minimum)
+- Gradle 9.5.0
+
+### Build Commands
+```bash
+# Build debug APK
+./gradlew build
+
+# Build release APK
+./gradlew assembleRelease
+
+# Run on emulator/device
+./gradlew installDebug
+```
+
+### Lint Warnings
+The project may show some lint warnings about Android SDK usage. These are not critical and can be ignored for development purposes.
+
+## Status
+✅ **Project Successfully Built**
+- Builds without errors
+- All dependencies resolved
+- Ready for testing and deployment
