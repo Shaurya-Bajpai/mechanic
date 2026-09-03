@@ -15,6 +15,7 @@ import com.example.mechanic.screens.details.MechanicDetailsScreen
 import com.example.mechanic.screens.details.MechanicDetailsViewModel
 import com.example.mechanic.screens.details.MechanicDetailsViewModelFactory
 import com.example.mechanic.screens.home.HomeScreen
+import com.example.mechanic.screens.request.RequestServiceScreen
 
 object Routes {
     const val HOME = "home"
@@ -68,6 +69,39 @@ fun AppNavigation() {
                         onRequestServiceClick = {
                             navController.navigate("${Routes.REQUEST_SERVICE}/${mechanicId}")
                         }
+                    )
+                }
+            }
+        }
+
+        composable(
+            route = "${Routes.REQUEST_SERVICE}/{mechanicId}",
+            arguments = listOf(navArgument("mechanicId") { type = NavType.StringType })
+        ) { backStackEntry ->
+
+            val mechanicId = backStackEntry.arguments?.getString("mechanicId") ?: return@composable
+            val detailsViewModel: MechanicDetailsViewModel = viewModel(factory = MechanicDetailsViewModelFactory(mechanicId))
+            val uiState by detailsViewModel.uiState.collectAsState()
+
+            when {
+                uiState.isLoading -> {
+                    LoadingView()
+                }
+                uiState.errorMessage != null -> {
+                    ErrorView(
+                        message = uiState.errorMessage!!,
+                        onRetry = { navController.popBackStack() }
+                    )
+                }
+                uiState.mechanic != null -> {
+                    val mechanic = uiState.mechanic!!
+                    RequestServiceScreen(
+                        services =
+                            mechanic.services
+                                .split(", ")
+                                .filter { it.isNotBlank() },
+                        onBackClick = { navController.popBackStack() },
+                        onSubmitted = { navController.popBackStack() }
                     )
                 }
             }
