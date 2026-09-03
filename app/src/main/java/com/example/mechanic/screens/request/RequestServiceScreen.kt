@@ -1,5 +1,6 @@
 package com.example.mechanic.screens.request
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -15,6 +16,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 
@@ -26,6 +28,7 @@ fun RequestServiceScreen(
     onSubmitted: () -> Unit,
     viewModel: RequestServiceViewModel = viewModel()
 ) {
+    val context = LocalContext.current
     val uiState by viewModel.uiState.collectAsState()
     var serviceExpanded by remember { mutableStateOf(false) }
 
@@ -67,6 +70,7 @@ fun RequestServiceScreen(
                         .height(56.dp),
                     shape = RoundedCornerShape(16.dp)
                 ) {
+                    Toast.makeText(context, "Service Request Submitted", Toast.LENGTH_SHORT).show()
                     Icon(Icons.Default.Build, null)
                     Spacer(Modifier.width(8.dp))
                     Text("Submit Service Request")
