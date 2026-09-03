@@ -26,7 +26,7 @@ import com.example.mechanic.screens.components.MechanicCard
 
 @Composable
 fun HomeScreen(
-    onMechanicClick: (Int) -> Unit,
+    onMechanicClick: (String) -> Unit,
     viewModel: HomeViewModel = viewModel()
 ) {
 
@@ -49,7 +49,7 @@ fun HomeScreen(
                 ) ||
 
                 mechanic.services.any { service ->
-                    service.contains(
+                    service.toString().contains(
                         searchQuery,
                         ignoreCase = true
                     )
