@@ -35,15 +35,21 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.mechanic.data.repository.MechanicRepository
+import com.example.mechanic.data.remote.RetrofitInstance
 import com.example.mechanic.screens.components.ErrorView
 import com.example.mechanic.screens.components.LoadingView
 import com.example.mechanic.screens.components.MechanicCard
 
 @Composable
 fun HomeScreen(
-    onMechanicClick: (String) -> Unit,
-    viewModel: HomeViewModel = viewModel()
+    onMechanicClick: (String) -> Unit
 ) {
+    val viewModel: HomeViewModel = viewModel(
+        factory = HomeViewModelFactory(
+            MechanicRepository(RetrofitInstance.api)
+        )
+    )
     val uiState by viewModel.uiState.collectAsState()
     var searchQuery by remember { mutableStateOf("") }
     var selectedFilter by remember { mutableStateOf("All") }
@@ -53,14 +59,14 @@ fun HomeScreen(
     val filteredMechanics = uiState.mechanics.filter { mechanic ->
         val matchesSearch = searchQuery.isBlank() ||
             mechanic.name.contains(searchQuery, true) ||
-            mechanic.location.contains(searchQuery, true) ||
-            mechanic.services.any { it.toString().contains(searchQuery, true) }
+            mechanic.address.contains(searchQuery, true) ||
+            mechanic.services.contains(searchQuery, true)
 
         val matchesFilter = when (selectedFilter) {
             "Open Now" -> mechanic.isOpen
-            "Engine" -> mechanic.services.any { it.toString().contains("engine", true) }
-            "Brakes" -> mechanic.services.any { it.toString().contains("brake", true) }
-            "Oil Change" -> mechanic.services.any { it.toString().contains("oil", true) }
+            "Engine" -> mechanic.services.contains("engine", true)
+            "Brakes" -> mechanic.services.contains("brake", true)
+            "Oil Change" -> mechanic.services.contains("oil", true)
             else -> true
         }
         matchesSearch && matchesFilter

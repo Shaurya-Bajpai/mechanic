@@ -48,7 +48,6 @@ dependencies {
     // Hilt
     implementation(libs.hilt.android)
     annotationProcessor(libs.hilt.android.compiler)
-    implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
 
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.activity.compose)

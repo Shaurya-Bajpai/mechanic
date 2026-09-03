@@ -2,19 +2,22 @@ package com.example.mechanic.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.compose.runtime.LaunchedEffect
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.example.mechanic.data.remote.RetrofitInstance
+import com.example.mechanic.data.repository.MechanicRepository
 import com.example.mechanic.screens.components.ErrorView
 import com.example.mechanic.screens.components.LoadingView
 import com.example.mechanic.screens.confirmation.ConfirmationScreen
 import com.example.mechanic.screens.details.MechanicDetailsScreen
 import com.example.mechanic.screens.details.MechanicDetailsViewModel
+import com.example.mechanic.screens.details.MechanicDetailsViewModelFactory
 import com.example.mechanic.screens.home.HomeScreen
 import com.example.mechanic.screens.request.RequestServiceScreen
 
@@ -47,7 +50,11 @@ fun AppNavigation() {
         ) { backStackEntry ->
 
             val mechanicId = backStackEntry.arguments?.getString("mechanicId") ?: return@composable
-            val viewModel: MechanicDetailsViewModel = hiltViewModel()
+            val viewModel: MechanicDetailsViewModel = viewModel(
+                factory = MechanicDetailsViewModelFactory(
+                    MechanicRepository(RetrofitInstance.api)
+                )
+            )
             
             LaunchedEffect(mechanicId) {
                 viewModel.setMechanicId(mechanicId)
@@ -87,7 +94,11 @@ fun AppNavigation() {
         ) { backStackEntry ->
 
             val mechanicId = backStackEntry.arguments?.getString("mechanicId") ?: return@composable
-            val detailsViewModel: MechanicDetailsViewModel = hiltViewModel()
+            val detailsViewModel: MechanicDetailsViewModel = viewModel(
+                factory = MechanicDetailsViewModelFactory(
+                    MechanicRepository(RetrofitInstance.api)
+                )
+            )
             
             LaunchedEffect(mechanicId) {
                 detailsViewModel.setMechanicId(mechanicId)
