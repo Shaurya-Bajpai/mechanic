@@ -185,6 +185,13 @@ app/src/main/java/com/example/mechanic/
 - Request Service Screen → Service Form with validation
 - Confirmation Screen → Success message
 
+## Screenshots
+<img width="150" height="350" alt="image" src="https://github.com/user-attachments/assets/c1eaf88b-ff7e-415e-8ed4-8a7370d64c6d" />
+<img width="150" height="350" alt="image" src="https://github.com/user-attachments/assets/c7ecd318-f21f-4216-bf86-1238021d7bdd" />
+<img width="150" height="350" alt="image" src="https://github.com/user-attachments/assets/0d092491-d851-455c-8d03-86c70e839c21" />
+<img width="150" height="350" alt="image" src="https://github.com/user-attachments/assets/45b8536d-fdf5-4936-a896-572a43473ceb" />
+
+
 ## Build & Run
 
 ### Prerequisites
