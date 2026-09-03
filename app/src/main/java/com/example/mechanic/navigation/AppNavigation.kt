@@ -2,8 +2,8 @@ package com.example.mechanic.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -12,6 +12,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.mechanic.screens.components.ErrorView
 import com.example.mechanic.screens.components.LoadingView
+import com.example.mechanic.screens.confirmation.ConfirmationScreen
 import com.example.mechanic.screens.details.MechanicDetailsScreen
 import com.example.mechanic.screens.details.MechanicDetailsViewModel
 import com.example.mechanic.screens.home.HomeScreen
@@ -21,6 +22,7 @@ object Routes {
     const val HOME = "home"
     const val DETAILS = "details"
     const val REQUEST_SERVICE = "request_service"
+    const val CONFIRMATION = "confirmation"
 }
 
 @Composable
@@ -47,7 +49,7 @@ fun AppNavigation() {
             val mechanicId = backStackEntry.arguments?.getString("mechanicId") ?: return@composable
             val viewModel: MechanicDetailsViewModel = hiltViewModel()
             
-            remember(mechanicId) {
+            LaunchedEffect(mechanicId) {
                 viewModel.setMechanicId(mechanicId)
             }
             
@@ -87,7 +89,7 @@ fun AppNavigation() {
             val mechanicId = backStackEntry.arguments?.getString("mechanicId") ?: return@composable
             val detailsViewModel: MechanicDetailsViewModel = hiltViewModel()
             
-            remember(mechanicId) {
+            LaunchedEffect(mechanicId) {
                 detailsViewModel.setMechanicId(mechanicId)
             }
             
@@ -111,10 +113,22 @@ fun AppNavigation() {
                                 .split(", ")
                                 .filter { it.isNotBlank() },
                         onBackClick = { navController.popBackStack() },
-                        onSubmitted = { navController.popBackStack() }
+                        onSubmitted = { navController.navigate(Routes.CONFIRMATION) }
                     )
                 }
             }
+        }
+
+        composable(route = Routes.CONFIRMATION) {
+            ConfirmationScreen(
+                onBackToHome = {
+                    navController.navigate(Routes.HOME) {
+                        popUpTo(Routes.HOME) {
+                            inclusive = true
+                        }
+                    }
+                }
+            )
         }
     }
 }

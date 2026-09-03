@@ -43,8 +43,15 @@ class RequestServiceViewModel @Inject constructor() : ViewModel() {
             state.phoneNumber.isBlank() -> {
                 setError("Please enter your phone number")
             }
+
+            !state.phoneNumber.matches(Regex("^[0-9]{10}$")) -> {
+                setError("Phone number must contain 10 digits")
+            }
             state.vehicleNumber.isBlank() -> {
                 setError("Please enter your vehicle number")
+            }
+            state.vehicleNumber.length < 6 -> {
+                setError("Please enter a valid vehicle number")
             }
             state.selectedService.isBlank() -> {
                 setError("Please select a service")

@@ -28,7 +28,6 @@ fun RequestServiceScreen(
     onSubmitted: () -> Unit,
     viewModel: RequestServiceViewModel = viewModel()
 ) {
-    val context = LocalContext.current
     val uiState by viewModel.uiState.collectAsState()
     var serviceExpanded by remember { mutableStateOf(false) }
 
@@ -70,7 +69,6 @@ fun RequestServiceScreen(
                         .height(56.dp),
                     shape = RoundedCornerShape(16.dp)
                 ) {
-                    Toast.makeText(context, "Service Request Submitted", Toast.LENGTH_SHORT).show()
                     Icon(Icons.Default.Build, null)
                     Spacer(Modifier.width(8.dp))
                     Text("Submit Service Request")
