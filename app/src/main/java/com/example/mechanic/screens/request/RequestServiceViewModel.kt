@@ -3,11 +3,14 @@ package com.example.mechanic.screens.request
 import androidx.lifecycle.ViewModel
 import com.example.mechanic.data.model.RequestServiceUiState
 import com.example.mechanic.data.model.ServiceRequest
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import javax.inject.Inject
 
-class RequestServiceViewModel : ViewModel() {
+@HiltViewModel
+class RequestServiceViewModel @Inject constructor() : ViewModel() {
     private val _uiState = MutableStateFlow(RequestServiceUiState())
     val uiState: StateFlow<RequestServiceUiState> = _uiState.asStateFlow()
 

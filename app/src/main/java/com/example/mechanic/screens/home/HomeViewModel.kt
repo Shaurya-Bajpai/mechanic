@@ -1,19 +1,19 @@
 package com.example.mechanic.screens.home
 
-import com.example.mechanic.data.repository.MechanicRepository
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.mechanic.data.remote.RetrofitInstance
+import com.example.mechanic.data.repository.MechanicRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class HomeViewModel : ViewModel() {
-
-    private val repository = MechanicRepository(
-        RetrofitInstance.api
-    )
+@HiltViewModel
+class HomeViewModel @Inject constructor(
+    private val repository: MechanicRepository
+) : ViewModel() {
 
     private val _uiState = MutableStateFlow(HomeUiState())
 

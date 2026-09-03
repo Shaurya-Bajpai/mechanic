@@ -3,7 +3,8 @@ package com.example.mechanic.navigation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.compose.runtime.remember
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -13,7 +14,6 @@ import com.example.mechanic.screens.components.ErrorView
 import com.example.mechanic.screens.components.LoadingView
 import com.example.mechanic.screens.details.MechanicDetailsScreen
 import com.example.mechanic.screens.details.MechanicDetailsViewModel
-import com.example.mechanic.screens.details.MechanicDetailsViewModelFactory
 import com.example.mechanic.screens.home.HomeScreen
 import com.example.mechanic.screens.request.RequestServiceScreen
 
@@ -45,7 +45,12 @@ fun AppNavigation() {
         ) { backStackEntry ->
 
             val mechanicId = backStackEntry.arguments?.getString("mechanicId") ?: return@composable
-            val viewModel: MechanicDetailsViewModel = viewModel(factory = MechanicDetailsViewModelFactory(mechanicId))
+            val viewModel: MechanicDetailsViewModel = hiltViewModel()
+            
+            remember(mechanicId) {
+                viewModel.setMechanicId(mechanicId)
+            }
+            
             val uiState by viewModel.uiState.collectAsState()
 
             when {
@@ -80,7 +85,12 @@ fun AppNavigation() {
         ) { backStackEntry ->
 
             val mechanicId = backStackEntry.arguments?.getString("mechanicId") ?: return@composable
-            val detailsViewModel: MechanicDetailsViewModel = viewModel(factory = MechanicDetailsViewModelFactory(mechanicId))
+            val detailsViewModel: MechanicDetailsViewModel = hiltViewModel()
+            
+            remember(mechanicId) {
+                detailsViewModel.setMechanicId(mechanicId)
+            }
+            
             val uiState by detailsViewModel.uiState.collectAsState()
 
             when {

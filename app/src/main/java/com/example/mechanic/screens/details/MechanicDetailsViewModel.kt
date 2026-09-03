@@ -3,21 +3,29 @@ package com.example.mechanic.screens.details
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.mechanic.data.model.MechanicDetailsUiState
-import com.example.mechanic.data.remote.RetrofitInstance
 import com.example.mechanic.data.repository.MechanicRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class MechanicDetailsViewModel(private val mechanicId: String) : ViewModel() {
+@HiltViewModel
+class MechanicDetailsViewModel @Inject constructor(
+    private val repository: MechanicRepository
+) : ViewModel() {
 
-    private val repository = MechanicRepository(RetrofitInstance.api)
     private val _uiState = MutableStateFlow(MechanicDetailsUiState())
     val uiState: StateFlow<MechanicDetailsUiState> = _uiState.asStateFlow()
 
-    init {
-        loadMechanic()
+    private var mechanicId: String = ""
+
+    fun setMechanicId(id: String) {
+        if (this.mechanicId != id) {
+            this.mechanicId = id
+            loadMechanic()
+        }
     }
 
     private fun loadMechanic() {
